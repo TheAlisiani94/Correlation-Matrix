@@ -1,0 +1,42 @@
+clearvars
+clc
+close all
+
+% Read the first sheet of the Excel file
+filename = 'MatlabData.xlsx'; % Replace with the actual file name
+sheet = 1; % First sheet
+data = readmatrix(filename, 'Sheet', sheet);
+
+% Extract the columns
+numDatapoints = data(:, 1);
+columnNames = {'sheet1',	'sheet2',	'sheet3',	'sheet4'}; % Replace with your actual column names
+columnData = data(:, 2:end);
+
+% Calculate correlation matrix
+correlationMatrix = corrcoef(columnData);
+
+% Plot correlation matrix with values
+figure;
+imagesc(correlationMatrix);
+title('Correlation Matrix','FontSize',24);
+colorbar;
+xticks(1:size(correlationMatrix, 2));
+yticks(1:size(correlationMatrix, 2));
+xticklabels(columnNames);
+yticklabels(columnNames);
+% Increase font size for x-axis and y-axis tick labels
+set(gca, 'FontSize', 16); % Set font size for current axis
+
+% Add correlation values as text
+textColors = repmat(correlationMatrix(:) > 0.5, 1, 3); % Define text colors based on correlation strength
+textStrings = num2str(correlationMatrix(:), '%.2f'); % Convert correlation values to strings
+textStrings = strtrim(cellstr(textStrings)); % Remove any space padding
+[x, y] = meshgrid(1:size(correlationMatrix, 2)); % Create coordinate grid for placing text
+hStrings = text(x(:), y(:), textStrings(:), 'HorizontalAlignment', 'center'); % Add text labels
+
+% Set text color based on correlation strength
+textColors = num2cell(textColors, 2);
+set(hStrings, {'Color'}, textColors);
+
+% Set font size for text labels
+set(hStrings, 'FontSize', 24);
